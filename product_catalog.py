@@ -11,7 +11,7 @@ def get_date():
 def add_product(prod_id):
     prod_name = input(f"Product Name: ").title().strip()
     prod_category = input(f"Product Categories: ").capitalize().strip()
-    prod_price = float(input(f"Product Price (per unit): RM"))
+    prod_price = round(float(input(f"Product Price (per unit): RM")), 2)
     supplier_name = input(f"Supplier Name: ").title().strip()
     supplier_id = input(f"Supplier ID: ").capitalize().strip()
 

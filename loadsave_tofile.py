@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 
 # File format is JSON.
@@ -34,6 +33,12 @@ def load_inventory(product_id):
     inventory = master_list.loc[[product_id], ["Product Name", "Inventory Update Date", "Quantity in Inventory", "Min "
                                                "Quantity", "Expiry Flag", "Expiry Date"]]
     return inventory
+
+
+def load_sales():
+    master_list = load_catalog()
+    sales = master_list.loc[:, ["Product Name", "Product Price", "Quantity in Inventory", "Min Quantity", "Date Sold", "Quantity Sold"]]
+    return sales
 
 
 def merge_df(updated_list):
