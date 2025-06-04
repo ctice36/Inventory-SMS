@@ -6,36 +6,47 @@ import numpy as np
 def load_catalog():
     try:
         master_list = pd.read_json("Product List.json", orient='index')
+        master_list.index.name = "Product ID"
 
     except FileNotFoundError:
         print("File not found. Initialize empty DataFrame")
         master_list = pd.DataFrame(
-            columns=["Product Name", "Product Categories", "Product Price", "Supplier Name", "Supplier ID",
-                     "Expiry Flag", "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity",
-                     "Date Sold", "Quantity Sold"])
+            columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
+                     "Supplier ID",
+                     "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity", "Expiry Flag",
+                     "Expiry Date", "Date Sold", "Quantity Sold"])
         master_list.set_index("Product ID", inplace=True)
 
     except ValueError:
         print("Invalid JSON format. Initialize empty DataFrame")
         master_list = pd.DataFrame(
-            columns=["Product Name", "Product Categories", "Product Price", "Supplier Name", "Supplier ID",
-                     "Expiry Flag", "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity",
-                     "Date Sold", "Quantity Sold"])
+            columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
+                     "Supplier ID",
+                     "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity", "Expiry Flag",
+                     "Expiry Date", "Date Sold", "Quantity Sold"])
         master_list.set_index("Product ID", inplace=True)
 
+    master_list[["Created at", "Inventory Update Date", "Expiry Date", "Date Sold"]] = master_list[["Created at",
+                                                                                                    "Inventory Update Date",
+                                                                                                    "Expiry Date",
+                                                                                                    "Date Sold"]].astype(
+        "object")
     return master_list
 
 
 def load_inventory(product_id):
     master_list = load_catalog()
-    inventory = master_list.loc[product_id, ["Product Name", "Inventory Update Date", "Quantity in Inventory"]]
+    # inventory_df = master_list_df[["product_id", "stock_qty", "updated_at"]].copy()
+    # print(master_list, type(master_list))
+    inventory = master_list.loc[[product_id], ["Product Name", "Inventory Update Date", "Quantity in Inventory", "Min "
+                                               "Quantity", "Expiry Flag", "Expiry Date"]]
     return inventory
 
 
 def merge_df(updated_list):
     master_list = load_catalog()
-    new_master_list = pd.merge(master_list, updated_list, left_index=True, right_index=True)
-    save_catalog(new_master_list)
+    master_list.update(updated_list)
+    save_catalog(master_list)
 
 
 def concat_df(list_to_concat):
@@ -56,7 +67,7 @@ def save_catalog(list_to_save):
 
 """
 ## for catalog
-"Product ID",
+"Product ID", (index)
 "Product Name",
 "Product Categories",
 "Product Price",
