@@ -12,32 +12,25 @@ def load_catalog():
         print("File not found. Initialize empty DataFrame")
         master_list = pd.DataFrame(
             columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
-                     "Supplier ID",
-                     "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity", "Expiry Flag",
-                     "Expiry Date", "Date Sold", "Quantity Sold"])
+                     "Supplier ID", "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity",
+                     "Expiry Flag", "Expiry Date", "Date Sold", "Quantity Sold"])
         master_list.set_index("Product ID", inplace=True)
 
     except ValueError:
         print("Invalid JSON format. Initialize empty DataFrame")
         master_list = pd.DataFrame(
             columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
-                     "Supplier ID",
-                     "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity", "Expiry Flag",
-                     "Expiry Date", "Date Sold", "Quantity Sold"])
+                     "Supplier ID", "Created at", "Inventory Update Date", "Quantity in Inventory", "Min Quantity",
+                     "Expiry Flag", "Expiry Date", "Date Sold", "Quantity Sold"])
         master_list.set_index("Product ID", inplace=True)
 
-    master_list[["Created at", "Inventory Update Date", "Expiry Date", "Date Sold"]] = master_list[["Created at",
-                                                                                                    "Inventory Update Date",
-                                                                                                    "Expiry Date",
-                                                                                                    "Date Sold"]].astype(
-        "object")
+    master_list[["Created at", "Inventory Update Date", "Expiry Date", "Date Sold"]] = (
+        master_list[["Created at", "Inventory Update Date", "Expiry Date", "Date Sold"]].astype("object"))
     return master_list
 
 
 def load_inventory(product_id):
     master_list = load_catalog()
-    # inventory_df = master_list_df[["product_id", "stock_qty", "updated_at"]].copy()
-    # print(master_list, type(master_list))
     inventory = master_list.loc[[product_id], ["Product Name", "Inventory Update Date", "Quantity in Inventory", "Min "
                                                "Quantity", "Expiry Flag", "Expiry Date"]]
     return inventory
@@ -60,29 +53,3 @@ def save_catalog(list_to_save):
     # even though the column arrangement is not same is ok, as long as the name is correct
     product_list = list_to_save.sort_index()
     product_list.to_json("Product List.json", orient='index', indent=4)
-
-
-# df = pd.DataFrame(np.random.rand(6, 4))
-# save_catalog(df)
-
-"""
-## for catalog
-"Product ID", (index)
-"Product Name",
-"Product Categories",
-"Product Price",
-"Supplier Name",
-"Supplier ID",
-"Expiry Flag",
-"Min Quantity"
-
-## for inventory
-"Inventory Update Date",
-"Quantity in Inventory",
-"Expiry Date", <-- check and alert
-
-
-##for sales
-"Date Sold",
-"Quantity Sold"
-"""

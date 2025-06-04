@@ -16,15 +16,12 @@ def update_inv(prod_id):
     min_quantity = int(input("Minimum quantity alert: "))
     print(product_df.loc[prod_id, "Expiry Flag"])
 
-    try:
-        if product_df.loc[prod_id, "Expiry Flag"] == 1:
-            expiry_date = (today + timedelta(weeks=52)).strftime("%Y-%m-%d")
-        elif product_df.loc[prod_id, "Expiry Flag"] == 2:
-            expiry_date = (today + timedelta(weeks=36)).strftime("%Y-%m-%d")
-        elif product_df.loc[prod_id, "Expiry Flag"] == 3:
-            expiry_date = (today + timedelta(weeks=2)).strftime("%Y-%m-%d")
-    except ValueError:
-        print("Invalid input. Please input 1 or 2 or 3")
+    if product_df.loc[prod_id, "Expiry Flag"] == 1:
+        expiry_date = (today + timedelta(weeks=52)).strftime("%Y-%m-%d")
+    elif product_df.loc[prod_id, "Expiry Flag"] == 2:
+        expiry_date = (today + timedelta(weeks=36)).strftime("%Y-%m-%d")
+    elif product_df.loc[prod_id, "Expiry Flag"] == 3:
+        expiry_date = (today + timedelta(weeks=2)).strftime("%Y-%m-%d")
 
     total_quantity = int(product_df.loc[prod_id, "Quantity in Inventory"]) + quantity_added
 
@@ -35,53 +32,34 @@ def update_inv(prod_id):
         "Min Quantity": min_quantity
     }
 
-    """product_df.loc[prod_id, "Inventory Update Date"] = inv_update_date
+    for col, val in updated_info.items():
+        product_df.at[prod_id, col] = val
+
+    """
+    # Old coding:
+    product_df.loc[prod_id, "Inventory Update Date"] = inv_update_date
     product_df.at[prod_id, "Quantity in Inventory"] = total_quantity
     product_df.at[prod_id, "Expiry Date"] = expiry_date
     product_df.at[prod_id, "Min Quantity"] = min_quantity"""
 
-    for col, val in updated_info.items():
-        product_df.at[prod_id,col] = val
-
     ltf.merge_df(product_df)
-    print("merge complete")
-    # print(f" Updated product info:\n {product_df, type(product_df)}")
+    print("Merge completed")
 
-    """## for inventory
+    """
+    _________________________________________________________________
+    def update_inv
+        print product name just to make sure adding the correct product
+        input new quantity
+        save today date 
+        call save file
+        only merge the changed data only
     
-    "Inventory Update Date",
-    "Quantity in Inventory",
-    "Expiry Flag"
-    "Expiry Date", < -- check and alert
-    "Min Quantity"
-    """
-
-    """
-    print product name just to make sure adding the correct product
-    input new quantity
-    save today date 
-    call save file
-    only merge the changed data only
-        
-    """
-    """ Product df
-
-    ##for catalog 
-    prod id (index)
-    prod name
-    prod category
-    prod price
-    supplier name
-    supplier id
-    expiry flag
-
-    ## for inventory
-    "Inventory Update Date",
-    "Quantity in Inventory",
-    "Expiry Date", < -- check and alert
-    "Min Quantity"
-
-    ##for sales
-    "Date Sold",
-    "Quantity Sold"
+    __________________________________________________________________
+    def alert_expiry
+        call expiry date
+    
+    __________________________________________________________________
+    def min_quantity
+        get alert from sold 
+        if the quantity in inv less than min --> alert 
     """

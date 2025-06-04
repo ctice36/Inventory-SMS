@@ -10,15 +10,27 @@ def get_date():
 # Return the new df of a new product
 def add_product(prod_id):
     prod_name = input(f"Product Name: ").title().strip()
-    prod_category = input(f"Product Categories: ").title().strip()
+    prod_category = input(f"Product Categories: ").capitalize().strip()
     prod_price = float(input(f"Product Price (per unit): RM"))
     supplier_name = input(f"Supplier Name: ").title().strip()
     supplier_id = input(f"Supplier ID: ").capitalize().strip()
+
     print(f"Please input the expiry code")
     print(f"1. Non-expire prod")
     print(f"2. Within 1 year.")
     print(f"3. Within 1 month")
-    expiry_flag = int(input(f"Expiry code: "))
+
+    while True:
+        try:
+            expiry_flag = int(input(f"Expiry code: "))
+            if not 0 < expiry_flag < 4:
+                print("Input only 1, 2 or 3")
+            else:
+                break
+        except ValueError:
+            print("Input only 1, 2 or 3")
+            continue
+
     today = get_date().strftime("%Y-%m-%d")
     other_item = None
 
@@ -37,8 +49,7 @@ def add_product(prod_id):
                                 "Quantity Sold": [other_item]
                                 }, index=[prod_id])
 
-    # Call the master list, concatenate and call save file/function
-
+    # concatenate to call save file/function
     cf.concat_df(new_product)
     print(f"{new_product}\n\n .....saved ")
     print("------------------------------------------------------------------------------")
@@ -55,26 +66,3 @@ def remove_product(master_list):
     drop the item from master list
 
     """
-
-
-""" Product df
-
-##for catalog 
-prod id (index)
-prod name
-prod category
-prod price
-supplier name
-supplier id
-expiry flag
-
-## for inventory
-"Inventory Update Date",
-"Quantity in Inventory",
-"Expiry Date", < -- check and alert
-"Min Quantity"
-
-##for sales
-"Date Sold",
-"Quantity Sold"
-"""
