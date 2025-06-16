@@ -14,6 +14,7 @@ def add_product(prod_id):
     prod_price = round(float(input(f"Product Price (per unit): RM")), 2)
     supplier_name = input(f"Supplier Name: ").title().strip()
     supplier_id = input(f"Supplier ID: ").capitalize().strip()
+    expiry_flag = 0
 
     print(f"Please input the expiry code")
     print(f"1. Non-expire prod")
@@ -32,7 +33,6 @@ def add_product(prod_id):
             continue
 
     today = get_date().strftime("%Y-%m-%d")
-    other_item = None
 
     new_product = pd.DataFrame({"Product Name": [prod_name],
                                 "Product Categories": [prod_category],
@@ -40,24 +40,22 @@ def add_product(prod_id):
                                 "Supplier Name": [supplier_name],
                                 "Supplier ID": [supplier_id],
                                 "Expiry Flag": [expiry_flag],
-                                "Created at": [today],
-                                "Inventory Update Date": [other_item],
-                                "Quantity in Inventory": 0,
-                                "Min Quantity": [other_item],
-                                "Expiry Date": [other_item],
-                                "Date Sold": [other_item],
-                                "Quantity Sold": [other_item]
+                                "Created at": [today]
                                 }, index=[prod_id])
 
     # concatenate to call save file/function
-    cf.concat_df(new_product)
+    filename = "Product List2.json"
+    combined_df = cf.concat_df(new_product,filename)
+    cf.save_catalog(combined_df, filename)
+
     print(f"{new_product}\n\n .....saved ")
     print("------------------------------------------------------------------------------")
     input("\nPress enter to proceed...")
 
 
 def remove_product(master_list):
-    """input password
+    """
+    input password
     if not password match
     print you have no authorities for this operation
     if password match

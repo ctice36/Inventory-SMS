@@ -6,7 +6,7 @@ import product_catalog as pc
 
 def update_inv(prod_id):
     product_df = ltf.load_inventory(prod_id)
-    # ["Product Name", "Inventory Update Date", "Quantity in Inventory", "Expiry Date", "Min Quantity"]
+    # ["Product Name", "Batch Number", "Quantity in Inventory", "Expiry Date", "Min Quantity"]
     # print(f" Product_df (before):\n {product_df, type(product_df)}")
 
     today = pc.get_date()
@@ -26,7 +26,7 @@ def update_inv(prod_id):
     total_quantity = int(product_df.loc[prod_id, "Quantity in Inventory"]) + quantity_added
 
     updated_info = {
-        "Inventory Update Date": inv_update_date,
+        "Batch Number": inv_update_date,
         "Quantity in Inventory": total_quantity,
         "Expiry Date": expiry_date,
         "Min Quantity": min_quantity
@@ -37,12 +37,12 @@ def update_inv(prod_id):
 
     """
     # Old coding:
-    product_df.loc[prod_id, "Inventory Update Date"] = inv_update_date
+    product_df.loc[prod_id, "Batch Number"] = inv_update_date
     product_df.at[prod_id, "Quantity in Inventory"] = total_quantity
     product_df.at[prod_id, "Expiry Date"] = expiry_date
     product_df.at[prod_id, "Min Quantity"] = min_quantity"""
-
-    ltf.merge_df(product_df)
+    filename = "Inventory.json"
+    ltf.merge_df(product_df, filename)
     print("Merge completed")
 
     """
