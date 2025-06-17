@@ -14,13 +14,14 @@ def main_menu():
     print("5. TransactionHistory")
     print("6. ReportPrinter")
     print("7. Exit")
+    print("8. View products list")
     print("-----------------------------")
 
 
 def id_check(must_exist=True):
     while True:
 
-        master_list = ltf.load_catalog().index
+        master_list = ltf.load_file("Product List2.json").index
         print("Input the Product ID")
         product_id_input = input("Product ID: ").upper().strip()  # Product ID / Bar Code
         exist = product_id_input in master_list.values
@@ -87,5 +88,8 @@ while True:
             print("-----------------------------")
             print("Exit the Program...")
             break
+        case "8":
+            ltf.show_list()
+
         case _:
             print("Invalid input. Please choose a number between 1-7")

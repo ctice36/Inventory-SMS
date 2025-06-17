@@ -15,7 +15,7 @@ def add_product(prod_id):
     supplier_name = input(f"Supplier Name: ").title().strip()
     supplier_id = input(f"Supplier ID: ").capitalize().strip()
     expiry_flag = 0
-
+    # use enumerate
     print(f"Please input the expiry code")
     print(f"1. Non-expire prod")
     print(f"2. Within 1 year.")
@@ -34,23 +34,33 @@ def add_product(prod_id):
 
     today = get_date().strftime("%Y-%m-%d")
 
-    new_product = pd.DataFrame({"Product Name": [prod_name],
-                                "Product Categories": [prod_category],
-                                "Product Price": [prod_price],
-                                "Supplier Name": [supplier_name],
-                                "Supplier ID": [supplier_id],
-                                "Expiry Flag": [expiry_flag],
-                                "Created at": [today]
-                                }, index=[prod_id])
+    # Setting Product ID as index. This DF to be stored in Product List file
+    new_product_pc = pd.DataFrame({"Product Name": [prod_name],
+                                   "Product Categories": [prod_category],
+                                   "Product Price": [prod_price],
+                                   "Supplier Name": [supplier_name],
+                                   "Supplier ID": [supplier_id],
+                                   "Expiry Flag": [expiry_flag],
+                                   "Register on": [today]
+                                   }, index=[prod_id])
 
-    # concatenate to call save file/function
-    filename = "Product List2.json"
-    combined_df = cf.concat_df(new_product,filename)
-    cf.save_catalog(combined_df, filename)
+    # This DF to be stored in Inventory file
+    new_product_inv = new_product_pc.loc[:, ["Product Name", "Product Price", "Expiry Flag"]]
 
-    print(f"{new_product}\n\n .....saved ")
+    # save to product catalog
+    save_to(new_product_pc, filename="Product List2.json")
+    # save to inventory
+    save_to(new_product_inv, filename="Inventory.json")
+
+    print(f"{new_product_pc}\n\n .....saved ")
     print("------------------------------------------------------------------------------")
     input("\nPress enter to proceed...")
+
+
+def save_to(df, filename):
+    # concatenate to call save file/function
+    combined_df = cf.concat_df(df, filename)
+    cf.save_catalog(combined_df, filename)
 
 
 def remove_product(master_list):
