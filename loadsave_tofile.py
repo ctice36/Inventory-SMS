@@ -39,10 +39,11 @@ def load_file(filename):
         if "Register on" in pc_list.columns:
             pc_list[["Register on"]] = (pc_list[["Register on"]].astype("object"))
 
-    except FileNotFoundError and ValueError:
-        print("File not found.")
+    except FileNotFoundError or ValueError:
+
         match filename:
-            case "Product List2.json":  # Match product list columns
+            case "Product List.json":  # Match product list columns
+                print("Product List file not found.")
                 pc_list = pd.DataFrame(columns=["Product ID",
                                                 "Product Name",
                                                 "Product Categories",
@@ -54,6 +55,7 @@ def load_file(filename):
                 pc_list.set_index("Product ID", inplace=True)
 
             case "Inventory.json":  # Match inventory columns
+                print("Inventory file not found.")
                 pc_list = pd.DataFrame(columns=["Product ID",
                                                 "Product Price",
                                                 "Expiry Flag",
@@ -64,6 +66,7 @@ def load_file(filename):
                 pc_list.set_index("Product ID", inplace=True)
             # Do we really need to create blank sales record ?????=============
             case "Sales Record.json":  # Match sales record columns
+                print("Sales Record file not found.")
                 pc_list = pd.DataFrame(columns=["Product ID",
                                                 "Quantity Sold",
                                                 "Date Sold",
@@ -71,11 +74,6 @@ def load_file(filename):
                 pc_list.set_index("Product ID", inplace=True)
 
     return pc_list
-
-
-def load_inventory(product_id):
-    inventory = load_file("Inventory.json")
-    return inventory
 
 
 def load_sales():

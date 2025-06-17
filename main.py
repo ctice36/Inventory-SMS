@@ -1,6 +1,7 @@
 import product_catalog as pc
 import inventory as inv
 import loadsave_tofile as ltf
+import check_info as ci
 
 
 def main_menu():
@@ -18,7 +19,7 @@ def main_menu():
     print("-----------------------------")
 
 
-def id_check(must_exist=True):
+"""def id_check(must_exist=True):
     while True:
 
         master_list = ltf.load_file("Product List2.json").index
@@ -51,7 +52,7 @@ def id_check(must_exist=True):
             except ValueError:
                 print("Invalid input. Please choose a number between 1 or 2")
                 continue
-
+"""
 
 while True:
 
@@ -61,16 +62,13 @@ while True:
     match user_input:
         # 1. Product Catalog
         case "1":
-            product_id = id_check(must_exist=False)
+            product_id = ci.id_check(must_exist=False)
             if product_id is None:
                 continue
             pc.add_product(product_id)
         # 2. Inventory
         case "2":
-            product_id = id_check(must_exist=True)
-            if product_id is None:
-                continue
-            inv.update_inv(product_id)
+            inv.update_inv()
         # 3. StockIn
         case "3":
             pass
