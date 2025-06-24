@@ -1,79 +1,98 @@
 import pandas as pd
 
 # File format is JSON.
-"""def load_catalog():
-    try:
-        master_list = pd.read_json("Product List.json", orient='index')
-        master_list.index.name = "Product ID"
-
-    except FileNotFoundError:
-        print("File not found. Initialize empty DataFrame")
-        master_list = pd.DataFrame(
-            columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
-                     "Supplier ID", "Register on", "Batch Number", "Quantity in Inventory", "Min Quantity",
-                     "Expiry Flag", "Expiry Date", "Date Sold", "Quantity Sold"])
-        master_list.set_index("Product ID", inplace=True)
-
-    except ValueError:
-        print("Invalid JSON format. Initialize empty DataFrame")
-        master_list = pd.DataFrame(
-            columns=["Product ID", "Product Name", "Product Categories", "Product Price", "Supplier Name",
-                     "Supplier ID", "Register on", "Batch Number", "Quantity in Inventory", "Min Quantity",
-                     "Expiry Flag", "Expiry Date", "Date Sold", "Quantity Sold"])
-        master_list.set_index("Product ID", inplace=True)
-
-    master_list[["Register on", "Batch Number", "Expiry Date", "Date Sold"]] = (
-        master_list[["Register on", "Batch Number", "Expiry Date", "Date Sold"]].astype("object"))
-    return master_list"""
 _files_cache = {}
 
 
-def load_file(filename):
+def refresh_catalog(filename):
+    if filename in _files_cache:
+        del _files_cache[filename]
 
+
+def load_file(filename):
     if filename in _files_cache:  # To make sure the file downloaded only once
         return _files_cache[filename]
 
+    product_list = 0
+
     try:
-        pc_list = pd.read_json(filename, orient='index')
-        pc_list.index.name = "Product ID"
-        if "Register on" in pc_list.columns:
-            pc_list[["Register on"]] = (pc_list[["Register on"]].astype("object"))
+        product_list = pd.read_json(filename, orient='index')
+        product_list.index.name = "Product ID"
 
-    except FileNotFoundError or ValueError:
+        # to change all date related column to string
+        for col in product_list.columns:
+            if "date" in col.lower():
+                product_list[[col]] = product_list[[col]].astype("object")
 
+    except (FileNotFoundError, ValueError):
+        # any date related column must have "date" in its name
         match filename:
             case "Product List.json":  # Match product list columns
                 print("Product List file not found.")
-                pc_list = pd.DataFrame(columns=["Product ID",
-                                                "Product Name",
-                                                "Product Categories",
-                                                "Product Price",
-                                                "Supplier Name"
-                                                "Supplier ID",
-                                                "Expiry Flag",
-                                                "Register on"])
-                pc_list.set_index("Product ID", inplace=True)
+                product_list = pd.DataFrame(columns=["Product ID",
+                                                     "Product Name",
+                                                     "Product Categories",
+                                                     "Product Price",
+                                                     "Supplier Name"
+                                                     "Supplier ID",
+                                                     "Expiry Flag",
+                                                     "Register Date"])
+                product_list.set_index("Product ID", inplace=True)
 
             case "Inventory.json":  # Match inventory columns
                 print("Inventory file not found.")
-                pc_list = pd.DataFrame(columns=["Product ID",
-                                                "Product Price",
-                                                "Expiry Flag",
-                                                "Batch Number",
-                                                "Expiry Date",
-                                                "Inventory Quantity",
-                                                "Minimum Quantity"])
-                pc_list.set_index("Product ID", inplace=True)
+                product_list = pd.DataFrame(columns=["Product ID",
+                                                     "Product Name",
+                                                     "Product Price",
+                                                     "Expiry Flag",
+                                                     "Batch Date",
+                                                     "Expiry Date",
+                                                     "Inventory Quantity",
+                                                     "Minimum Quantity"])
+                product_list.set_index("Product ID", inplace=True)
             # Do we really need to create blank sales record ?????=============
             case "Sales Record.json":  # Match sales record columns
                 print("Sales Record file not found.")
-                pc_list = pd.DataFrame(columns=["Product ID",
-                                                "Quantity Sold",
-                                                "Date Sold",
-                                                "Promotion"])
-                pc_list.set_index("Product ID", inplace=True)
+                product_list = pd.DataFrame(columns=["Product ID",
+                                                     "Quantity Sold",
+                                                     "Transaction Date",
+                                                     "Promotion"])
+                product_list.set_index("Product ID", inplace=True)
 
-    return pc_list
+    return product_list
+
+
+def main_info():
+    master_list = load_file("Product List.json")
+    master_list = master_list.loc[:, ["Product Name",
+                                      "Product Price",
+                                      "Expiry Flag"]]
+
+    return master_list
+
+
+def load_inventory():
+    inv_list = load_file("Inventory.json")
+    main_list = main_info()
+    if len(inv_list.index) == 0:
+        inv_list = main_list
+        print(inv_list)
+    elif 0 < len(inv_list.index) < len(main_list.index):
+        merging = pd.merge(main_list, inv_list, on="Product ID", how="outer", indicator=True)
+        if merging[merging["_merge"] == "right_only"] is True:
+            print("The inventory file is corrupt. Please check and repair manually")
+        pd.set_option('display.max_columns', None)
+        print(merging)
+
+
+    """
+    if inventory list len is not == product list
+    inv_list = product_list.loc[:,["Product Name", "Product Price", "Expiry Flag"]
+    """
+    #if df == 1:  # df = 1 is a marker to
+    #    inventory = inv_list.loc[[product_id]]
+
+    #return inventory
 
 
 def load_sales():

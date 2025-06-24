@@ -9,6 +9,8 @@ def get_date():
 
 # Return the new df of a new product
 def add_product(prod_id):
+    today = get_date().strftime("%Y-%m-%d")
+
     prod_name = input(f"Product Name: ").title().strip()
     prod_category = input(f"Product Categories: ").capitalize().strip()
     prod_price = round(float(input(f"Product Price (per unit): RM")), 2)
@@ -30,9 +32,8 @@ def add_product(prod_id):
                 break
         except ValueError:
             print("Input only 1, 2 or 3")
-            continue
 
-    today = get_date().strftime("%Y-%m-%d")
+            continue
 
     # Setting Product ID as index. This DF to be stored in Product List file
     new_product_pc = pd.DataFrame({"Product Name": [prod_name],
@@ -41,11 +42,13 @@ def add_product(prod_id):
                                    "Supplier Name": [supplier_name],
                                    "Supplier ID": [supplier_id],
                                    "Expiry Flag": [expiry_flag],
-                                   "Register on": [today]
+                                   "Register Date": [today]
                                    }, index=[prod_id])
 
     # This DF to be stored in Inventory file
-    new_product_inv = new_product_pc.loc[:, ["Product Name", "Product Price", "Expiry Flag"]]
+    new_product_inv = new_product_pc.loc[:, ["Product Name",
+                                             "Product Price",
+                                             "Expiry Flag"]]
 
     # save to product catalog
     save_to(new_product_pc, filename="Product List2.json")

@@ -6,9 +6,16 @@ import check_info as ci
 
 
 def update_inv():
-    filename = "Product List.json"
-    product_df = ltf.load_file(filename)
-    # ["Product ID", "Product Price", "Expiry Flag", "Batch Number", "Expiry Date",
+
+    prod_id = ci.id_check(must_exist=True)
+    if prod_id is None:
+        return
+    df_size = 1  # marker to download only prod id row
+
+    ltf.load_inventory()
+    #filename = "Product List.json"
+    #product_df = ltf.load_file(filename)
+    # ["Product ID", "Product Price", "Expiry Flag", "Batch Date", "Expiry Date",
     # "Inventory Quantity", "Minimum Quantity"]
     # print(f" Product_df (before):\n {product_df, type(product_df)}")
 
@@ -17,11 +24,9 @@ def update_inv():
     batch_no = today.strftime("%Y%m%d")
 
     while True:
-        prod_id = ci.id_check(must_exist=True)
-        if prod_id is None:
-            break
-        update_target = product_df[:prod_id]
-        print(update_target)
+
+        #update_target = product_df[:prod_id]
+        #print(update_target)
         """quantity_added = int(input("Quantity to add: "))
         min_quantity = int(input("Minimum quantity alert: "))
         print(product_df.loc[prod_id, "Expiry Flag"])
@@ -36,7 +41,7 @@ def update_inv():
         total_quantity = int(product_df.loc[prod_id, "Quantity in Inventory"]) + quantity_added
 
         updated_info = {
-            "Batch Number": batch_no,
+            "Batch Date": batch_no,
             "Quantity in Inventory": total_quantity,
             "Expiry Date": expiry_date,
             "Min Quantity": min_quantity
@@ -47,7 +52,7 @@ def update_inv():
 
         """
         # Old coding:
-        product_df.loc[prod_id, "Batch Number"] = inv_update_date
+        product_df.loc[prod_id, "Batch Date"] = inv_update_date
         product_df.at[prod_id, "Quantity in Inventory"] = total_quantity
         product_df.at[prod_id, "Expiry Date"] = expiry_date
         product_df.at[prod_id, "Min Quantity"] = min_quantity"""

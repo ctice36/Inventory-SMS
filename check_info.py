@@ -4,7 +4,7 @@ import loadsave_tofile as ltf
 def id_check(must_exist=True):
     while True:
 
-        master_list = ltf.load_file("Product List.json").index
+        master_list = ltf.main_info().index
         print("Input the Product ID")
         product_id_input = input("Product ID: ").upper().strip()  # Product ID / Bar Code
         exist = product_id_input in master_list.values
@@ -35,3 +35,5 @@ def id_check(must_exist=True):
             except ValueError:
                 print("Invalid input. Please choose a number between 1 or 2")
                 continue
+
+

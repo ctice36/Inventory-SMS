@@ -32,7 +32,7 @@ def transaction():
             print("Input the correct product ID")
             continue
 
-    trans_df = sale_df.loc[[product_id], ["Product Name", "Product Price", "Quantity in Inventory", "Date Sold",
+    trans_df = sale_df.loc[[product_id], ["Product Name", "Product Price", "Quantity in Inventory", "Transaction Date",
                                           "Quantity Sold"]]
     print(f"Product name: {trans_df[product_id, "Product Price"]}")
     trans_qtt = int(input("Quantity: "))
@@ -45,7 +45,7 @@ def transaction():
 
     updated_info = {
         "Quantity in Inventory": left_in_inv,
-        "Date Sold": today,
+        "Transaction Date": today,
         "Quantity Sold": trans_qtt
     }
 

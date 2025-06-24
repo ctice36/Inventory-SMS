@@ -1,0 +1,17 @@
+{
+    "CL001":{
+        "Product Name":"Kelloges Conrflakes 500Gm",
+        "Product Categories":"Cereal",
+        "Product Price":35.0,
+        "Supplier Name":"Kelloge",
+        "Supplier ID":"S005",
+        "Expiry Flag":2,
+        "Created at":"2025-06-15",
+        "Inventory Update Date":null,
+        "Quantity in Inventory":null,
+        "Min Quantity":null,
+        "Expiry Date":null,
+        "Date Sold":null,
+        "Quantity Sold":null
+    }
+}

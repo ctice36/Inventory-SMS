@@ -62,6 +62,7 @@ while True:
     match user_input:
         # 1. Product Catalog
         case "1":
+            # add password in the future
             product_id = ci.id_check(must_exist=False)
             if product_id is None:
                 continue
