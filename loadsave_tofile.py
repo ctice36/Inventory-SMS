@@ -1,4 +1,5 @@
 import pandas as pd
+import check_info as ci
 
 # File format is JSON.
 _files_cache = {}
@@ -28,7 +29,7 @@ def load_file(filename):
         # any date related column must have "date" in its name
         match filename:
             case "Product List.json":  # Match product list columns
-                print("Product List file not found.")
+                print("Creating new Product List file.")
                 product_list = pd.DataFrame(columns=["Product ID",
                                                      "Product Name",
                                                      "Product Categories",
@@ -40,7 +41,7 @@ def load_file(filename):
                 product_list.set_index("Product ID", inplace=True)
 
             case "Inventory.json":  # Match inventory columns
-                print("Inventory file not found.")
+                print("Creating new Inventory file.")
                 product_list = pd.DataFrame(columns=["Product ID",
                                                      "Product Name",
                                                      "Product Price",
@@ -52,7 +53,7 @@ def load_file(filename):
                 product_list.set_index("Product ID", inplace=True)
             # Do we really need to create blank sales record ?????=============
             case "Sales Record.json":  # Match sales record columns
-                print("Sales Record file not found.")
+                print("Creating new Sales Record file.")
                 product_list = pd.DataFrame(columns=["Product ID",
                                                      "Quantity Sold",
                                                      "Transaction Date",
@@ -64,35 +65,22 @@ def load_file(filename):
 
 def main_info():
     master_list = load_file("Product List.json")
-    master_list = master_list.loc[:, ["Product Name",
-                                      "Product Price",
-                                      "Expiry Flag"]]
+    main_list = master_list.loc[:, ["Product Name",
+                                    "Product Price",
+                                    "Expiry Flag"]]
 
-    return master_list
+    return main_list
 
 
 def load_inventory():
     inv_list = load_file("Inventory.json")
     main_list = main_info()
-    if len(inv_list.index) == 0:
-        inv_list = main_list
-        print(inv_list)
-    elif 0 < len(inv_list.index) < len(main_list.index):
-        merging = pd.merge(main_list, inv_list, on="Product ID", how="outer", indicator=True)
-        if merging[merging["_merge"] == "right_only"] is True:
-            print("The inventory file is corrupt. Please check and repair manually")
-        pd.set_option('display.max_columns', None)
-        print(merging)
 
-
-    """
-    if inventory list len is not == product list
-    inv_list = product_list.loc[:,["Product Name", "Product Price", "Expiry Flag"]
-    """
-    #if df == 1:  # df = 1 is a marker to
-    #    inventory = inv_list.loc[[product_id]]
-
-    #return inventory
+    if len(inv_list.index) < len(main_list.index):
+        df = ci.inv_check(inv_list, main_list)
+        return df
+    else:
+        return inv_list
 
 
 def load_sales():

@@ -1,5 +1,5 @@
 import pandas as pd
-import loadsave_tofile as cf
+import loadsave_tofile as ltf
 import datetime as dt
 
 
@@ -62,8 +62,8 @@ def add_product(prod_id):
 
 def save_to(df, filename):
     # concatenate to call save file/function
-    combined_df = cf.concat_df(df, filename)
-    cf.save_catalog(combined_df, filename)
+    combined_df = ltf.concat_df(df, filename)
+    ltf.save_catalog(combined_df, filename)
 
 
 def remove_product(master_list):

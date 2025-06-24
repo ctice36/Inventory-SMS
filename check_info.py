@@ -1,4 +1,5 @@
 import loadsave_tofile as ltf
+import pandas as pd
 
 
 def id_check(must_exist=True):
@@ -37,3 +38,24 @@ def id_check(must_exist=True):
                 continue
 
 
+def inv_check(inv_list, main_list):
+
+    if len(inv_list.index) == 0:
+        return main_list
+    elif 0 < len(inv_list.index) < len(main_list.index):
+        merging = pd.merge(main_list, inv_list, on="Product ID", how="outer", indicator=True)
+        pd.set_option('display.max_columns', None)
+        # print(f"Before \n {merging}")
+        if not merging[merging["_merge"] == "right_only"].empty:
+            # The right_only should not exist
+            print("The Product List file is corrupt. Please check and repair manually")
+            return None
+        elif not merging[merging["_merge"] == "left_only"].empty:
+            # The left_only means the product catalog is not updated to inventory
+            only_left = merging[~(merging["_merge"] == "both")]
+            only_left = only_left.drop(columns=[col for col in only_left.columns if col.endswith("_y")] + ["_merge"]) \
+                .rename(columns={col: col.replace("_x", "") for col in only_left.columns if col.endswith("_x")})
+            # print(f"'both' deleted \n {only_left}")
+            inv_list = pd.concat([inv_list, only_left])
+            # print(f"Concat INV lst \n {inv_list}")
+            return inv_list
