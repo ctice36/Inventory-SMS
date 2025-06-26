@@ -4,6 +4,12 @@ import loadsave_tofile as ltf
 import check_info as ci
 
 
+# Important!!!!!
+# This program main reference file is Product List.
+# Once product list's file corrupt, the whole program will fail.
+# Inventory and Sales file also refer to the Product List.
+# Highest priority of maintaining the Product List file is a must.
+
 def main_menu():
     print("\n-----------------------------")
     print("Available operation")
